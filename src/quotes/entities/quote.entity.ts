@@ -7,12 +7,12 @@ export class Quote {
 
   @Column({
     nullable: false,
-    length: 30,
   })
-  author: string;
+  quote: string;
 
   @Column({
     nullable: false,
+    length: 30,
   })
-  quote: string;
+  author: string;
 }
