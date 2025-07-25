@@ -12,13 +12,22 @@ export class QuotesService {
     private quotesRepository: Repository<Quote>,
   ) {}
 
-  async findAll(page?: number, limit?: number): Promise<Quote[]> {
-    if (page === undefined && limit === undefined) {
+  async findBy(options: {
+    page?: number;
+    limit?: number;
+    author?: string;
+    randomize?: boolean;
+  }): Promise<Quote[]> {
+    if (options.randomize) {
+      return this.getRandomQuotes(options.limit);
+    }
+
+    if (options.page === undefined && options.limit === undefined) {
       return this.quotesRepository.find();
     }
 
-    const limitFound = limit ?? 2;
-    const pageFound = page ?? 1;
+    const limitFound = options.limit ?? 2;
+    const pageFound = options.page ?? 1;
     const skip = (pageFound - 1) * limitFound;
 
     return this.quotesRepository.find({
@@ -36,13 +45,13 @@ export class QuotesService {
     return quote;
   }
 
-  async getRandomQuotes(limit: number) {
-    const allQuotes = await this.findAll();
+  async getRandomQuotes(limit?: number) {
+    const allQuotes = await this.quotesRepository.find();
     const count = allQuotes.length;
-
+    const limitFound = limit ?? 1;
     const result: Quote[] = [];
 
-    for (let i = 0; i < limit; i++) {
+    for (let i = 0; i < limitFound; i++) {
       const rndNumber = Math.floor(Math.random() * count);
       const quote = allQuotes.at(rndNumber);
 
