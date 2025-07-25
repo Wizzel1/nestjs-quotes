@@ -12,13 +12,13 @@ export class QuotesService {
     private quotesRepository: Repository<Quote>,
   ) {}
 
-  async findAll(page?: string, limit?: string): Promise<Quote[]> {
+  async findAll(page?: number, limit?: number): Promise<Quote[]> {
     if (page === undefined && limit === undefined) {
       return this.quotesRepository.find();
     }
 
-    const limitFound = limit ? parseInt(limit) : 2;
-    const pageFound = page ? parseInt(page) : 1;
+    const limitFound = limit ?? 2;
+    const pageFound = page ?? 1;
     const skip = (pageFound - 1) * limitFound;
 
     return this.quotesRepository.find({

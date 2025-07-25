@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { Quote } from './entities/quote.entity';
 import { QuotesService } from './quotes.service';
@@ -17,9 +18,9 @@ export class QuotesController {
 
   @Get()
   async findAll(
-    @Query('page') page: string,
-    @Query('limit') limit: string,
-  ): Promise<Quote[]> {
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+  ) {
     return this.quotesService.findAll(page, limit);
   }
 
