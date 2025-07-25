@@ -33,7 +33,7 @@ export class QuotesController {
     return this.quotesService.findById(id);
   }
 
-  @Post('new')
+  @Post()
   async createQuote(@Body() body: Quote) {
     return this.quotesService.createNewQuote(body);
   }
