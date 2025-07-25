@@ -28,19 +28,16 @@ export class QuotesController {
     await this.quotesService.migrate();
     return 'ABC';
   }
+
+  @Get('random')
+  async getRandomQuote(@Query('limit') limit: string) {
+    console.log('CONTROLLER CONSOLE LOG', 'Limit: ', limit);
+    return this.quotesService.getRandomQuotes(Number(limit));
+  }
+
   @Get(':id')
   async getQuoteById(@Param('id') id: string) {
     return this.quotesService.findById(Number(id));
-  }
-
-  @Get('/random')
-  async getRandomQuote(@Query('limit') limit: string) {
-    try {
-      console.log('CONTROLLER CONSOLE LOG', 'Limit: ', limit);
-      return this.quotesService.getRandomQuotes(Number(limit));
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   @Post('new')

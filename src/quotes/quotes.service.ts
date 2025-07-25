@@ -17,7 +17,6 @@ export class QuotesService {
       return this.quotesRepository.find();
     }
 
-    console.log('CONSOLE LOG: ', page, limit);
     const limitFound = limit ? parseInt(limit) : 2;
     const pageFound = page ? parseInt(page) : 1;
     const skip = (pageFound - 1) * limitFound;
@@ -38,18 +37,16 @@ export class QuotesService {
   }
 
   async getRandomQuotes(limit: number) {
-    console.log('WE ARE HERE');
-    const allQuotes = await this.findAll(undefined, undefined);
+    const allQuotes = await this.findAll();
     const count = allQuotes.length;
 
     const result: Quote[] = [];
 
     for (let i = 0; i < limit; i++) {
       const rndNumber = Math.floor(Math.random() * count);
-      console.log('RANDOM NUMBER', typeof rndNumber, 'COUNT: ', count);
       const quote = allQuotes.at(rndNumber);
 
-      if (!quote) return;
+      if (!quote) continue;
       result.push(quote);
     }
 
