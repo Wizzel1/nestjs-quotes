@@ -30,7 +30,7 @@ export class QuotesController {
 
   @Get(':id')
   async getQuoteById(@Param('id', ParseIntPipe) id: number) {
-    return this.quotesService.findById(Number(id));
+    return this.quotesService.findById(id);
   }
 
   @Post('new')
@@ -39,12 +39,12 @@ export class QuotesController {
   }
 
   @Delete(':id')
-  async deleteQuoteById(@Param('id') id: string) {
+  async deleteQuoteById(@Param('id', ParseIntPipe) id: number) {
     return this.quotesService.deleteQuoteById(id);
   }
 
   @Put(':id')
-  async updateQuote(@Param('id') id: string, @Body() body: Quote) {
+  async updateQuote(@Param('id', ParseIntPipe) id: number, @Body() body: Quote) {
     return this.quotesService.updatePost(id, body);
   }
 }

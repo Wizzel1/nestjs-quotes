@@ -76,14 +76,14 @@ export class QuotesService {
     return await this.quotesRepository.save(quote);
   }
 
-  async deleteQuoteById(id: string): Promise<Quote> {
-    const quote = await this.findById(Number(id));
+  async deleteQuoteById(id: number): Promise<Quote> {
+    const quote = await this.findById(id);
     await this.quotesRepository.delete(quote);
     return quote;
   }
 
-  async updatePost(id: string, body: Quote): Promise<Quote> {
+  async updatePost(id: number, body: Quote): Promise<Quote> {
     await this.quotesRepository.update(id, body);
-    return this.findById(Number(id));
+    return this.findById(id);
   }
 }
