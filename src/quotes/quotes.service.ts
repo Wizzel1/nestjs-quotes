@@ -12,8 +12,21 @@ export class QuotesService {
     private quotesRepository: Repository<Quote>,
   ) {}
 
-  async findAll(): Promise<Quote[]> {
-    return this.quotesRepository.find();
+  async findAll(page?: string, limit?: string): Promise<Quote[]> {
+    if (page === undefined && limit === undefined) {
+      return this.quotesRepository.find();
+    }
+
+    console.log('CONSOLE LOG: ', page, limit);
+    const limitFound = limit ? parseInt(limit) : 2;
+    const pageFound = page ? parseInt(page) : 1;
+    const skip = (pageFound - 1) * limitFound;
+
+    return this.quotesRepository.find({
+      skip,
+      take: limitFound,
+      order: { id: 'ASC' },
+    });
   }
 
   async findById(id: number): Promise<Quote> {
@@ -22,6 +35,25 @@ export class QuotesService {
       throw new NotFoundException(`Quote with ID ${id} not found.`);
     }
     return quote;
+  }
+
+  async getRandomQuotes(limit: number) {
+    console.log('WE ARE HERE');
+    const allQuotes = await this.findAll(undefined, undefined);
+    const count = allQuotes.length;
+
+    const result: Quote[] = [];
+
+    for (let i = 0; i < limit; i++) {
+      const rndNumber = Math.floor(Math.random() * count);
+      console.log('RANDOM NUMBER', typeof rndNumber, 'COUNT: ', count);
+      const quote = allQuotes.at(rndNumber);
+
+      if (!quote) return;
+      result.push(quote);
+    }
+
+    return result;
   }
 
   async migrate(): Promise<void> {
@@ -42,5 +74,10 @@ export class QuotesService {
     const quote = await this.findById(Number(id));
     await this.quotesRepository.delete(quote);
     return quote;
+  }
+
+  async updatePost(id: string, body: Quote): Promise<Quote> {
+    await this.quotesRepository.update(id, body);
+    return this.findById(Number(id));
   }
 }
