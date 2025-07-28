@@ -42,7 +42,9 @@ export class QuotesController {
     const quotesArray: Quote[] = [];
 
     for (const quote of quotes) {
-      const dto = plainToInstance(QuoteResponseDto, quote);
+      const dto = plainToInstance(QuoteResponseDto, quote, {
+        strategy: 'excludeAll',
+      });
 
       const error = await validate(dto);
       if (error.length > 0) {
