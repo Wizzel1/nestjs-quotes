@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { QuotesModule } from './quotes/quotes.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Quote } from './quotes/entities/quote.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { Quote } from './quotes/entities/quote.entity';
       logging: false, // Set to 'all' or true to see SQL queries in the console (useful for debugging)
     }),
     QuotesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
