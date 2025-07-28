@@ -4,6 +4,7 @@ import { Quote } from './entities/quote.entity';
 import type { Repository } from 'typeorm';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { QuoteRequestDto } from './dto/quote.request.dto';
 
 @Injectable()
 export class QuotesService {
@@ -71,9 +72,9 @@ export class QuotesService {
     });
   }
 
-  async createNewQuote(data: Quote): Promise<Quote> {
+  async createNewQuote(data: QuoteRequestDto): Promise<Quote> {
     const quote = this.quotesRepository.create(data);
-    return await this.quotesRepository.save(quote);
+    return this.quotesRepository.save(quote);
   }
 
   async deleteQuoteById(id: number): Promise<Quote> {
@@ -82,7 +83,7 @@ export class QuotesService {
     return quote;
   }
 
-  async updatePost(id: number, body: Quote): Promise<Quote> {
+  async updatePost(id: number, body: QuoteRequestDto): Promise<Quote> {
     await this.quotesRepository.update(id, body);
     return this.findById(id);
   }

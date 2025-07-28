@@ -9,11 +9,14 @@ import {
   Query,
   ParseIntPipe,
   ParseBoolPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { Quote } from './entities/quote.entity';
 import { QuotesService } from './quotes.service';
+import { QuoteRequestDto } from './dto/quote.request.dto';
 
 @Controller('quotes')
+@UsePipes(new ValidationPipe())
 export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 
@@ -34,7 +37,7 @@ export class QuotesController {
   }
 
   @Post()
-  async createQuote(@Body() body: Quote) {
+  async createQuote(@Body() body: QuoteRequestDto) {
     return this.quotesService.createNewQuote(body);
   }
 
@@ -44,7 +47,7 @@ export class QuotesController {
   }
 
   @Put(':id')
-  async updateQuote(@Param('id', ParseIntPipe) id: number, @Body() body: Quote) {
+  async updateQuote(@Param('id', ParseIntPipe) id: number, @Body() body: QuoteRequestDto) {
     return this.quotesService.updatePost(id, body);
   }
 }
