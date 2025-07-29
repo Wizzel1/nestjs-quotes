@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service'; // Adjust path if needed
-import * as bcrypt from 'bcrypt'; // For password comparison
+import { UsersService } from '../users/users.service';
+import * as bcrypt from 'bcrypt';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -16,9 +16,7 @@ export class AuthService {
     pass: string,
   ): Promise<Partial<User> | null> {
     try {
-      const user = await this.usersService.findByUsername(email);
-      console.log(user);
-
+      const user = await this.usersService.findByEmail(email);
       const isValid = await bcrypt.compare(pass, user.password);
       if (!user && !isValid) {
         return null;
