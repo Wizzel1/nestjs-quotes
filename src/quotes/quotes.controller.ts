@@ -13,6 +13,7 @@ import {
   ValidationPipe,
   InternalServerErrorException,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { QuotesService } from './quotes.service';
 import { QuoteRequestDto } from './dto/quote.request.dto';
@@ -20,6 +21,7 @@ import { QuoteResponseDto } from './dto/quote.response.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Quote } from './entities/quote.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('quotes')
 @UsePipes(new ValidationPipe())
@@ -75,16 +77,19 @@ export class QuotesController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createQuote(@Body() body: QuoteRequestDto): Promise<QuoteResponseDto> {
     return this.quotesService.createNewQuote(body);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteQuoteById(@Param('id', ParseIntPipe) id: number) {
     return this.quotesService.deleteQuoteById(id);
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async updateQuote(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: QuoteRequestDto,

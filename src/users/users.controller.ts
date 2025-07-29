@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { UserResponseDto } from './dto/user.response.dto';
 import { UserRequestDto } from './dto/user.request.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('users')
 @UsePipes(new ValidationPipe())
@@ -23,6 +25,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.usersService.findAll();
     const dtos = plainToInstance(UserResponseDto, users, {
@@ -40,6 +43,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async getUserById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UserResponseDto> {
@@ -54,11 +58,13 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteUserById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.deleteUserById(id);
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UserRequestDto,

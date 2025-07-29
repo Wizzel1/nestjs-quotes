@@ -17,8 +17,8 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local')) // Use the 'local' strategy for authentication
   @Post('login')
+  @UseGuards(AuthGuard('local')) // Use the 'local' strategy for authentication
   login(@Request() req, @Body() loginDto: LoginDto) {
     // @Body() is optional if you only care about req.user
     // Passport's LocalStrategy attaches the validated user to req.user
