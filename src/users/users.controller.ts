@@ -3,19 +3,16 @@ import {
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
+  NotFoundException,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Post,
   Put,
-  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserResponseDto } from './dto/user.response.dto';
-import { User } from './entities/user.entity';
 import { UserRequestDto } from './dto/user.request.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
@@ -28,25 +25,18 @@ export class UsersController {
   @Get()
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.usersService.findAll();
-    const usersArray: User[] = [];
+    const dtos = plainToInstance(UserResponseDto, users, {
+      enableImplicitConversion: true,
+    });
 
-    return users;
-
-    for (const user of users) {
-      const dto = plainToInstance(UserResponseDto, user, {
-        strategy: 'excludeAll',
-      });
-
+    for (const dto of dtos) {
       const error = await validate(dto);
       if (error.length > 0) {
-        console.error(error);
-        throw new InternalServerErrorException(
-          'Validation failed while getting all quotes',
-        );
+        console.log(error[0]);
+        throw new NotFoundException('Error getting alls users');
       }
-      usersArray.push(user);
     }
-    return usersArray;
+    return dtos;
   }
 
   @Get(':id')
@@ -55,8 +45,7 @@ export class UsersController {
   ): Promise<UserResponseDto> {
     const user = await this.usersService.findById(id);
     const dtos = plainToInstance(UserResponseDto, user);
-
-    return user;
+    return dtos;
   }
 
   @Post()
@@ -70,7 +59,10 @@ export class UsersController {
   }
 
   @Put(':id')
-  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body) {
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UserRequestDto,
+  ) {
     return this.usersService.updateUser(id, body);
   }
 }
