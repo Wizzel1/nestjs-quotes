@@ -18,6 +18,7 @@ import { UserRequestDto } from './dto/user.request.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 @Controller('users')
 @UsePipes(new ValidationPipe())
@@ -43,12 +44,17 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async getUserById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UserResponseDto> {
     const user = await this.usersService.findById(id);
     const dtos = plainToInstance(UserResponseDto, user);
+    const error = await validate(dtos);
+    if (error.length > 0) {
+      console.log(error[0]);
+      throw new NotFoundException('Error getting user by id');
+    }
     return dtos;
   }
 
@@ -64,11 +70,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UserRequestDto,
   ) {
+    console.log('body', body);
     return this.usersService.updateUser(id, body);
   }
 }

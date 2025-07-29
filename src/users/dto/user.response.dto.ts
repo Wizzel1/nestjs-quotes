@@ -1,5 +1,6 @@
-import { IsString, IsInt, IsNotEmpty } from 'class-validator';
+import { IsString, IsInt, IsNotEmpty, IsEnum } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { ROLES } from '../entities/user.entity';
 
 export class UserResponseDto {
   @IsInt()
@@ -15,4 +16,10 @@ export class UserResponseDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @Expose()
+  @IsNotEmpty()
+  @IsEnum(ROLES)
+  role: string;
 }
