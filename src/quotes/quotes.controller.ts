@@ -12,6 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { QuotesService } from './quotes.service';
 import { QuoteRequestDto } from './dto/quote.request.dto';
@@ -62,11 +63,15 @@ export class QuotesController {
   async getQuoteById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<QuoteResponseDto> {
-    const quote = await this.quotesService.findById(id);
-    const dtos = plainToInstance(QuoteResponseDto, quote);
-    console.log(dtos);
-
-    return quote;
+    try {
+      const quote = await this.quotesService.findById(id);
+      const dto = plainToInstance(QuoteResponseDto, quote);
+      const error = validate(dto);
+      return quote;
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('bla');
+    }
   }
 
   @Post()
@@ -80,7 +85,10 @@ export class QuotesController {
   }
 
   @Put(':id')
-  async updateQuote(@Param('id', ParseIntPipe) id: number, @Body() body) {
+  async updateQuote(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: QuoteRequestDto,
+  ) {
     return this.quotesService.updatePost(id, body);
   }
 }
